@@ -1,0 +1,37 @@
+윈도우 소켓(윈속)은 상당부분 BSD 계열 유닉스 소켓 참고함
+
+서버는 리눅스 기반, 클라이언트는 윈도우 기반
+
+winsock2.h를 포함
+ws2_32.lib 라이브러리를 링크시켜야 함
+
+속성(ALT+F7) - 구성 속성 - 입력 - 추가 종속성 - ws2_32.lib 입력
+
+윈속 초기화
+WSAStartup을 이용하여 윈도우 소켓의 버전, 버전 지원 가능한 lib. 초기화 작업 진행해야함
+
+    #include<winsock2.h>
+    int WSAStartup(WORD wVersionRequested, LPWSADATA lpWSAData); // 성공시 0, 실패시 errcode
+        wVersionRequested : 윈속의 버전 정보 // 0x0201, 0x0102 등
+        lpWSAData : 구조체 변수의 주소값 전달
+    WORD의 타입은 typedef를 통해 unsigned short로 정의됨
+    
+    버전정보 전달시 MAKEWORD 함수 이용
+        MAKEWORD(1,2); // 0x0102
+        MAKEWORD(2,2); // 0x0202
+    
+    LPWSADATA는 WSADATA의 포인터 형
+    함수 호출 이후, 해당 변수에 초기화된 lib. 정보가 채워짐
+    
+    int main(int argc, char** argv){
+        WSADATA wsaData;
+        /* ... */
+        if(WSAStartup(MAKEWORD(2,2),&wsaData)!=0)
+            ErrorHandling("WSAStartup() error!");
+        /* ... */
+        return 0;
+    }
+
+윈속 해제
+    #include<winsock2.h>
+    int WSACleanup(void); // 성공시 0, 실패시 SOCKET_ERROR 반환

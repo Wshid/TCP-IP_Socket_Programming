@@ -1,3 +1,7 @@
+/*
+    주로 클라이언트 프로그램에서는 socket 함수와 connect함수로 이루어짐(소켓 애성 및 연결 요청)
+        서버 프로그램보다 상대적으로 간단함
+*/
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -24,7 +28,7 @@ int main(int argc, char** argv)
         exit(1);
     }
     
-    sock=socket(PF_INET, SOCK_STREAM, 0);
+    sock=socket(PF_INET, SOCK_STREAM, 0); // 소켓을 생성, bind-listen 함수 호출 : server // connect : client
     if(sock==-1)
         error_handling("socket() error");
     

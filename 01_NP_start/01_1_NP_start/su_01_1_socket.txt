@@ -1,0 +1,21 @@
+#include<sys/socket.h> //기본 헤더 파일
+
+- 소켓 생성하기
+    int socket(int domain, int type, int protocol);
+
+- 소켓에 주소정보 할당
+    int bind(int sockfd, struct sockaddr *myaddr, socklen_t addrlen);
+
+- 소켓을 대기 상태로 만들기
+    int listen(int sockfd, int backlog);
+    
+- 연결 요청시, 요청 수락하기
+    int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+
+∴ 소켓 생성 -> IP:PORT 할당 -> 연결요청 가능상태로 변경 -> 연결요청 수락
+
+===
+- 연결 요청하기
+int connect(int sockfd, struct sockaddr *serv_addr, socklen_t addrlen);
+    -> 성공시 0, 실패시 -1
+    -> 주로 클라이언트에서 사용

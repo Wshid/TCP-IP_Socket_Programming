@@ -10,7 +10,7 @@ int main(void)
     int fd;
     char buf[BUF_SIZE];
     
-    fd=open("data.txt", O_RDONLY);
+    fd=open("out_01_2_low_open.txt", O_RDONLY);
     if(fd==-1) error_handling("open() error");
     
     printf("file descriptor : %d\n", fd);

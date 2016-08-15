@@ -33,18 +33,18 @@ int main(int argc, char** argv)
     serv_addr.sin_addr.s_addr=htonl(INADDR_ANY);
     serv_addr.sin_port=htons(atoi(argv[1]));
     
-    if(bind(serv_sock, (struct sockaddr*) &serv_addr, sizeof(serv_addr))==-1)
+    if(bind(serv_sock, (struct sockaddr*) &serv_addr, sizeof(serv_addr))==-1) // IP:PORT 할당
         error_handling("bind() error");
     
-    if(listen(serv_sock, 5)==-1)
+    if(listen(serv_sock, 5)==-1) // 소켓의 개방, 연결요청 수락할 수 있는 상태로 변경
         error_handling("listen() error");
     
     clnt_addr_size=sizeof(clnt_addr);
-    clnt_sock=accept(serv_sock, (struct sockaddr*)&clnt_addr, &clnt_addr_size);
+    clnt_sock=accept(serv_sock, (struct sockaddr*)&clnt_addr, &clnt_addr_size); //연결요청 수락, 오기전까지는 대기
     if(clnt_sock==-1)
         error_handling("accept() error");
         
-    write(clnt_sock, message, sizeof(message));
+    write(clnt_sock, message, sizeof(message)); // 데이터 전송하는 기능, accept이후이기때문에 연결요청을 미리 받았음을 의미
     close(clnt_sock);
     close(serv_sock);
     return 0;

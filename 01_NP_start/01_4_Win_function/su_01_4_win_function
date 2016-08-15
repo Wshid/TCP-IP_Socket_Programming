@@ -1,0 +1,36 @@
+
+소켓 생성 함수 - socket()
+    #include<winsock2.h>
+    SOCKET socket(int af, int type, int protocol); // 성공시 소켓 핸들, 실패시 INVALID_SOCKET
+
+IP:PORT 할당 - bind()
+    int bind(SOCKEt s, const struct sockaddr *name, int namelen) // 성공시 0, 실패시 SOCKET_ERROR
+
+요청 대기 - listen()
+    int listen(SOCKET s, int backlog); // 성공시 0, 실패시 SOCKET_ERROR
+
+요청 수락 - accept()
+    int accept(SOCKET s, struct sockaddr *addr, int *addrlen) // 성공시 소캣 핸들, 실패시 INVALID_SOCKET
+
+연결 요청 - connect()
+    int connect(SOCKET s, const struct sockaddr *name, int namelen); // 성공시 0, 실패시 SOCKET_ERROR
+
+소켓 종료
+    int closesocket(SOCKET s);
+
+SOCKET : 정수로 표현되는 소켓의 핸들값 저장을 위한 typedef에서 정의된 새로운 자료형
+
+
+윈도우 기반 입출력 함수
+윈도우에서는 파일 입출력 함수와 소켓 입출력 함수가 구분되어 있다
+    #include<winsock2.h>
+    int send(SOCKET s, const char *buf, int len, int flags); // 성공시 bytes수(EOF=0), 실패시 SOCKET_ERROR
+        s : 소켓의 핸들 값
+        buf : 전송할 데이터 저장된 buffer
+        len : 전송할 byte수
+        flags : 데이터 전송시 적용할 다양한 옵션정보
+        
+    * 리눅스와 비교시 flags 필드 추가 외에는 차이점이 없음
+    * 0으로 설정하면 아무런 옵션 설정을 하지 않음
+    
+    int recv(SOCKET s, const char* buf, int len, int flags);

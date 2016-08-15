@@ -1,0 +1,40 @@
+리눅스는 윈도우와 다르게 파일과 소켓을 구분하지 않음
+
+저 수준 파일 입출력(Low-level File Access) : 표준에 상관없이 OS가 독립적으로 제공하는~
+    리눅스에서 제공하는 함수일뿐, ANSI 표준에서 정의한 함수가 아님
+
+File Descriptor(File handle) : Sys.로부터 할당받은 파일 또는 소켓에 부여된 정수
+    0 : stdin
+    1 : stdout
+    2 : stderr
+        * File Handle의 경우 주로 Windows에서 사용되는 용어
+
+- 파일을 열때는 open 함수를 사용한다
+    #include<sys/types.h>
+    #include<sys/stat.h>
+    #include<fcntl.h>
+
+    int open(const char *path, int flag); // 성공시 fd, 실패시 -1
+        flag의 경우 O_CREAT, O_TRUNC, ... 등이 있음
+
+- 파일 닫기
+    #include<unistd.h>
+    int close(int fd); // 성공시 0, 실패시 1
+
+- 파일에 데이터 쓰기
+    #include<unistd.h>
+    ssize_t write(int fd, const void *buf, size_t nbytes);
+
+====
+_t 자료형
+    primitive data type // 고전적인 자료형
+    sys/types.h에 정의되어 있음
+    n비트 컴퓨터들이 생겨나면서, 코드의 기본 자료형 변경 최소화를 위해 구현됨
+        size_t, ssize_t만 변경해서 컴파일을 하면 되기 때문
+    시스템에서 정의하는 자료형의 이름에는 _t가 붙음
+
+===
+
+- 파일 데이터 읽기
+    ssize_t read(int fd, void *buf, size_t nbytes); // 성공시 byte수, 실패시 -1
+    
