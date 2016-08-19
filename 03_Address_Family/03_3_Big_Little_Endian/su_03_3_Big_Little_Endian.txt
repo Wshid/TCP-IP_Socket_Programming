@@ -1,0 +1,31 @@
+Big Endian
+    상위 바이트를 작은 번지수에 저장
+Little Endian
+    상위 바이트를 큰 번지수에 저장
+    
+ex) 0x12345678 저장시,
+    
+    Big Endian // 네트워크 바이트 순서
+        주소    값
+        0x20    0x12
+        0x21    0x34
+        0x22    0x56
+        0x23    0x78
+    
+    Little Endian // Intel 계열 CPU // 보통의 컴퓨터
+        주소    값
+        0x20    0x78
+        0x21    0x56
+        0x22    0x34
+        0x23    0x12
+
+
+바이트 순서변환(Endian Conversions)
+    unsigned short htons(unsigned short);   h -> n // short // 2바이트 // port
+    unsigned short ntohs(unsigned short);   n -> h // short
+    unsigned long htonl(unsigned long);     h -> n // long // 4바이트 // ip
+    unsigned long ntohl(unsigned long);     n -> h // long
+
+
+
+! sockaddr_in 구조체 변수에 데이터를 채울 때 이외에는 바이트 순서를 신경쓰지 않아도 됨!

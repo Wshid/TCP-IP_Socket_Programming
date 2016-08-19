@@ -1,0 +1,26 @@
+struct sockaddr_in addr;
+char *serv_ip="211.217.168.13";
+char *serv_port="9190";
+memset(&addr, 0, sizeof(addr));
+addr.sin_family=AF_INET;
+addr.sin_addr.s_addr=inet_addr(serv_ip);
+addr.sin_port=htons(atoi(serv_port));
+
+memset은 sockaddr_in 구조체의 sin_zero를 0으로 초기화 해주기 위해 사용한다.
+
+서버의 경우 bind -> listen -> accept로 이루어짐
+    sockaddr_in구조체로 서버 소켓의 IP/PORT 설정 후 bind
+클라이언트의 경우 connect로 연결시도
+    sockaddr_in 서버소켓의 IP/PORT 설정후 connect
+
+INADDR_ANY => 컴퓨터 IP주소가 자동 할당됨
+
+Multi-homed(한 컴퓨터 내 두개 이상의 NIC카드 보유), 포트만 일치하면 수신할 수 있게 됨
+
+
+#include<sys/socket.h>
+
+int bind(int sockfd, struct sockaddr *myaddr, socklen_t addrlen);
+    sockfd : IP/PORT를 할당할fd
+    myaddr : 주소정보를 포함한 구조체 변수의 주소값
+    addrlen : 두번째 인자의 길이

@@ -1,0 +1,9 @@
+network ID / host ID
+    class A : 0 ~ 127
+    class B : 128 ~ 191
+    class C : 192 ~ 223
+
+IP : 컴퓨터 구분
+PORT : 응용프로그램/서비스 구분
+
+Well Known PORT(0~1023)

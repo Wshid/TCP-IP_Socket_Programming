@@ -1,0 +1,43 @@
+프로토콜 : 컴퓨터 상호간의 대화에 필요한 통신규약
+
+#include<sys/socket.h>
+
+int socket(int domain, int type, int protocol)
+    domain : Protocol Family(프로토콜 체계)
+    type : 데이터 전송방식
+    protocol : 세부 프로토콜 정보
+
+1) domain
+    PF_INET : IPv4 프로토콜 체계
+    PF_INET6 : IPv6 프로토콜 체계
+    ...
+
+2) type
+    SOCK_STREAM : TCP, CO(Connected Oriented)
+        중간에 데이터 소멸이 적음, 에러처리
+        전송 순서대로 데이터 수신
+        소켓 : 소켓 = 1 : 1
+        전송하는 데이터의 경계 존재 x
+            -> write 여러번, read 한번 등이 가능해짐
+        
+        소켓은 내부적으로 Buffer(바이틑 배열) 보유
+        데이터가 수신되었다고 해서 바로 Read 호출이 아님. Buffer의 크기 만족시 read
+        
+        상대 소켓의 상태를 파악하면서 데이터를 전송하므로, 데이터 손실이 거의 일어나지 않음
+        
+        ∴ 신뢰성 있는 순차적인 바이트 기반의 연결 지향 데이터 전송방식의 소켓
+        
+    SOCK_DGRAM : UDP, CL(Connectless)
+        전송된 순서 상관 없이 빠르게 전송
+        손실 우려가 있음
+        데이터의 경계 존재
+            -> 전송시 두번 호출이라면 수신시에도 두번 호출
+        
+        ∴  신뢰성과 순차적 데이터 전송을 보장하지 않는, 고속의 데이터 전송을 목적으로 하는 소켓
+
+3) protocol
+    보통은 0을 인자로 함
+    하나의 프로토콜 체계 안에 데이터의 전송방식이 동일한 프로토콜이 둘 이상 존재하는 경우에만 사용
+    
+int tcp_socket=socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+int udp_socket=socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);

@@ -1,0 +1,44 @@
+struct sockaddr_in
+{
+    sa_family_t     sin_family; // Address Family
+    unit16_t        sin_port; // 16비트 PORT(TCP/UDP)
+    struct in_addr  sin_addr; // 32비트 IP
+    {
+        in_addr_t   s_addr; // 32비트 IPv4 주소
+    }
+    char            sin_zero[8]; // 사용 x
+}
+
+POSIX(Portable Operating System Interface) // 자료형 소개
+    sys/types.h
+        int8_t
+        uint8_t..
+        
+    sys/socket.h
+        sa_family_t // 주소체계(Address Family)
+        socklen_t // 길이 정보
+    
+    netinet/in.h
+        in_addr_t // IP주소정보, uint32_t
+        in_port_t // PORT 정보, uint16_t
+        
+sin_family
+    AF_INET // IPv4
+    AF_INET6 // IPv6
+    AF_LOCAL // 로컬 통신
+
+sin_port, sin_addr => 네트워크 바이트 순서로 지정됨
+
+sin_zero는 무조건 0으로 채워야함
+    -> 아닐 시, 원하는 값 가지지 못함
+    
+
+struct sockaddr_in serv_addr;
+
+if(bind(serv_addr, (struct sockaddr*)&serv_addr, sizeof(serv_adr))==-1)
+    struct sockaddr
+    {
+        sa_family_t     sin_family;
+        char            sa_data[14]; // 주소정보
+    }
+        => 주소를 담기 불편, 정확히 담을수가 없기 때문에 sockaddr_in을 사용후 캐스팅
