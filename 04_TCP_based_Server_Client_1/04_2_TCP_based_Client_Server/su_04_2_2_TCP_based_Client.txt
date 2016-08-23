@@ -1,0 +1,23 @@
+TCP 클라이언트의 함수호출 순서
+socket() -> connect() -> read() / write() -> close()
+
+connect는 연결 요청상태
+
+#include<sys/socket.h>
+
+int connect(int sock, strcut sockaddr* servaddr, socklen_t addrlen);
+    성공시 0, 실패시 -1 반환
+
+connect 반환시
+    서버에 의해 연결 요청 접수
+    네트워크 단절 등 오류상황 발생으로 인한 연결요청 중단
+
+서버에 의해 연결 접수라는 말은,
+    서버의 accept 함수호출이 아닌
+    연결 요청 대기 큐에 등록된 상황을 의미한다.
+        -> i.e. connect함수 반환시라도 당장의 서비스가 이뤄지지 않을 수 있음
+
+client socket의 주소정보는 bind함수를 기준으로 하는 것이 아니라
+    connect 함수 호출시, 커널에서, Host ip와 random port를 설정한다
+        -> 따라서 개발자가 따로 설정해줄 필요가 없다.
+        
