@@ -1,0 +1,25 @@
+에코 서버에는 문제가 없고
+    에코 클라이언트에만 문제가 있다?
+
+server
+    while((str_len=read(clnt_sock, message, BUF_SIZE))!=0)
+        write(clnt_sock, message, str_len);
+
+client
+    write(sock, message, strlen(message));
+    str_len=read(sock, message, BUF_SIZE-1);
+    
+보기에는 큰 차이가 없어 보이나,
+수신 단위에 문제가 생김
+
+문자열을 write를 통해 한번에 보내고
+    read 호출을 통해 한번에 수신받기를 원함 => 문제
+    
+clnt에게 문자열 데이터가 전부 전송되니까 기다리면 됨
+    => 시간 좀 지나서 read()함수 호출로 해결할 수 있음
+        => 그런데 얼마나 기다려야 할지?
+
+이 프로그램의 경우
+    클라이언트가 수신해야할 데이터의 크기를 미리 알고 있기 때문에
+    
+    그 크기만큼 받을때까지 read()를 반복 호출 시키면 됨
