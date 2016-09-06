@@ -1,0 +1,36 @@
+UDP Serv와 Clnt는
+    연결된 상태로 데이터 송수신 하지 않음
+        -> 연결 설정 과정이 필요 없음
+        -> listen과 accept함수 호출 필요 없음
+
+UDP 소켓의 생성 + 데이터 송수신 과정
+
+TCP는 소켓의 관계가 1:1
+UDP는 소켓 하나만 있어도 됨
+    하나의 소켓으로 두 곳에 host에게 전송 가능
+
+
+UDP 기반의 데이터 입출력 함수
+    TCP의 경우, 전송 이후
+        주소 정보 추가하는 과정이 필요 없었음
+            -> 이미 연결된 상태이기 때문
+
+    UDP의 경우, 연결상태 유지 x
+        -> 데이터 전송시 마다
+            목적지의 주소정보 별도 추가가 필요
+
+#include<sys/socket.h>
+    
+    ssize_t sendto(int sock, // UDP fd
+                    void *buff, // 전송할 데이터
+                    size_t nbytes, // 전송할 데이터 크기
+                    int flags, // 옵션 지정, 0으로 전달
+                    struct sockaddr *to, // 목적지 주소정보
+                    socklent_t addrlen); // 목적지 주소정보 크기
+    
+    ssize_t recvfrom(int sock,
+                        void *buff,
+                        size_t nbytes, // 수신할 최대 바이트
+                        int flags,
+                        struct sockaddr *from,
+                        socklen_t *addrlen);
