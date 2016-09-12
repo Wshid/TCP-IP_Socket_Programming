@@ -1,0 +1,51 @@
+프로그램상에서 Domain Name을 써야하는 이유?
+    특정 Domain에 IP가 물리게 되는데,
+        운용하는 동안에 고정적으로 IP쓰기가 어려움
+            -> 특히나 ISP서비스를 제공으로 IP유지시, sys관련된 이유로 언제든지 변경가능성이 존재
+        
+        IP주소는 Domain Name에 비해 변경 확률이 높기때문에
+            고정적인 IP로의 프로그램 작성이 아닌,
+                Domain Name으로써 구성을 해야함
+
+#include<netdb.h>
+
+도메인 주소를 이용해서 IP를 포함한 도메인 정보 가져오기
+struct hostent *gethostbyname(const char *hostname);
+    -> 성공시 hostent 주소값, 실패시 NULL
+
+struct hostent
+{
+    char *h_name; // 공식 도메인 이름, 홈페이지 대표 도메인이라고는 하지만, 아닌경우도 많음
+
+    char **h_aliases; // IP하나에 여러 도메인 물려있을때, 그 목록을 반환
+
+    int h_addrtype; // h_addr_list로 반환된 주소체계 리턴.
+                        IPv4=AF_INET
+
+    int h_length; // IP주소의 크기정보.
+                        IPv4 : 4
+                        IPv6 : 16
+    char **h_addr_list; 
+                        가장 중요한 멤버
+                        Domain -> IP로 반환됨
+                        Domain : IP = 1 : n 일때, 모든 IP주소 정보 획득도 가능
+}
+
+h_addr_list는 char**형이지만,
+    실제로 저장하고 있는 것은 in_addr 구조체 변수의 주소값임
+        -> 그래서 inet_ntoa라는 함수를 이용하는 것
+    호환성 문제때문
+
+    inet_ntoa : Big endian 32bit -> dotted decimal notation
+        네트워크 바이트 순서의 IP, 일반적으로 확인가능한 IP형태
+        cf) inet_addr
+        
+
+IP주소를 이용해서 IP를 포함한 도메인 정보 가져오기
+struct hostent *gethostbyaddr(const char *addr, // in_addr 구조체 변수 포인터, 호환성을 위해 char*형
+                                socklen_t len, // addr의 주소정보 길이
+                                                    IPv4=4
+                                                    IPv6=16
+                                int family); // 주소체계 정보 전달
+                                                AF_INET, AF_INET6
+

@@ -1,0 +1,43 @@
+close와 closesocket()의 경우
+    -> 일방적인 완전종료를 의미
+    
+이렇게 되면 입력 버퍼나 출력버퍼에 있는 내용이 제대로 수신 또는 송신 되지 않을 수 있음
+
+스트림 : 소켓이 연결되어 데이터 송/수신이 가능한 상태
+
+write()를 하게 되면
+    출력버퍼 -> 상대방의 입력 버퍼
+
+read()를 하게 되면
+    입력버퍼 -> host
+
+출력 버퍼 혹은 입력 버퍼 하나만 끊는 것을 '우아한 종료'라고 한다.
+
+#include<sys/socket.h>
+
+int shutdown(int sock, int howto); // 성공시 0, 실패시 -1
+    sock    종료할 소켓의 fd
+    howto
+            SHUT_RD     InputStream 종료
+            SHUT_WR     OutputStream 종료
+            SHUT_RDWR   Input/OutputStream 종료
+
+SHUT_RD , 입력 버퍼에 내용이 있어도 지워짐.
+SHUT_WR의 경우 출력 버퍼에 잔여된 데이터는 보내고 종료됨
+
+SHUT_RDWR은 shutdown함수를 SHUT_RD, SHUT_WR 두 번 호출한 것과 같음
+
+
+OutputStream 종료시 상대 호스트로 EOF 전송
+    -> 물론 close()해도 상대 호스트에 EOF 도착
+
+
+∴ 서버의 출력 스트림만 Half_Close해야함
+
+Windows 기반 구현시,
+
+#include<winsock2.h>
+
+int shutdown(SOCKET sock, int howto);
+    SD_RECEIVE, SD_SEND, SD_BOTH
+    0           1           2
