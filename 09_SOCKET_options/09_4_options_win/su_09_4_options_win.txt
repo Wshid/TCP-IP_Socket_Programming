@@ -1,0 +1,9 @@
+#include<winsock2.h>
+
+int getsockopt(SOCKET sock, int level, int optname, char* optval, int* optlen);
+    -> 성공시 0, 실패시 SOCKET_ERROR
+
+    optval이 char* 형인것을 확인해야함
+        -> linux에서는 void*형이었음
+
+int setsockopt(SOCKET sock, int level, int optname, const char* optval, int optlen);

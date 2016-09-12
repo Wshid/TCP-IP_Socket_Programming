@@ -1,0 +1,37 @@
+Nagle 알고리즘
+    전송한 데이터에 대한 ACK 메세지를 받아야만 다음 데이터를 전송하는 알고리즘
+    
+N ->
+    <- N
+agle ->
+    <- agle
+    
+agle 같은 경우 N.ack를 받기 전에 출력버퍼에 나머지 데이터(agle)이 대기중이다.
+
+Nagle 알고리즘의 장점
+    네트워크 트래픽 부하 최소화
+        -> 출력 버퍼를 최대한 활용하는 방식이기 때문
+        -> 한바이트씩 전송하게 되면, 헤더 정보 등의 부가정보가 붙어서 네트워크 트래픽이 증가하게 됨
+
+
+항상 좋은 것은 아님 -> 적용을 하더라도 큰 트래픽 차이가 없을때
+    -> 용량이 큰 파일의 데이터 전송
+
+파일데이터를 출력버퍼로 옮길때 시간은 얼마 소요되지 않음
+    -> Nagle 알고리즘 x여도 출력버퍼를 최대한 활용하게 됨
+    -> 오히려 적용 안한게 속도가 높음(알고리즘 자체 부하의 감소)
+
+TCP_NODELAY=1(TRUE) 설정시,
+    Nagle 알고리즘을 사용하지 않음
+    
+int opt_val=1;
+setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (void*)&opt_val, sizeof(opt_val));
+
+int opt_val;
+socklen_t opt_len;
+opt_len=sizeof(opt_val);
+getsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (void*) &opt_val, &opt_len);
+    Nagle 설정시 0,
+    설정x시 1
+    
+    

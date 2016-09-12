@@ -1,0 +1,52 @@
+Protocol Level : 계층
+
+get : 참조
+set : 변경
+
+SOL_SOCKET : 일반적인 옵션
+            SO_SNDBUF
+            SO_RCVBUF
+            SO_REUSEADDR
+            SO_KEEPALIVE
+            SO_BROADCAST
+            SO_DONTROUTE
+            SO_OOBINLINE
+            SO_ERROR        only Get
+            SO_TYPE         only Get
+
+IPPROTO_IP : IP 프로토콜 관련
+            IP_TOS
+            IP_TTL
+            IP_MULTICAST_TTL
+            IP_MULTICAST_LOOP
+            IP_MULTICAST_IF
+
+IPPROTO_TCP : TCP 프로토콜 관련
+            TCP_KEEPALIVE
+            TCP_NODELAY
+            TCP_MAXSEG
+            
+
+#include<sys/socket.h>
+
+옵션의 참조
+int getsockopt(int sock,            // 옵션확인을 위한 fd
+                int level,          // 프로토콜 레벨
+                int optname,        // 옵션 이름
+                void *optval,       // 확인결과 저장, 버퍼의 주소값
+                socklen_t *optlen); // optval의 크기 전달(그래야 저장이 가능함)
+
+int setsockopt(int sock, int level, int optname, void *optval, socklen_t optlen);
+
+마지막 변수에서 주소값을 전달하느냐, 아님 일반 변수를 전달하느냐에 대한 차이가 있음
+accpet처럼 get의 경우 마지막 인자에는 주소값을 전달해야함
+
+
+SO_TYPE : 소켓의 타입정보(TCP/UDP) 확인
+    -> 소켓의 타입은 한번 결정되면 변경이 불가능함
+    
+    
+SO_SNDBUF, SO_RCVBUF
+출력버퍼, 입력버퍼
+
+입출력 버퍼의 크기 조정 및 변경이 가능함

@@ -1,0 +1,41 @@
+클라이언트가 먼저 종료해도 별 이상 없음
+
+단, 서버에서 먼저 종료(FIN)을 하게 되면
+재실행시 문제가 생긴다.
+
+동일한 PORT번호로 재연결을 시도할 수 없음(일시적으로)
+
+이는 Time-wait과 관련이 있음
+
+Fore-way handshaking과정에서
+    FIN을 먼저 요청한 쪽에서 일정 시간 기다리는 것을 의미
+
+혹시라도 
+
+FIN ->
+
+    <- FIN, ACK
+
+    <- FIN, ACK
+
+ACK ->
+
+Time-wait...
+    
+과정에서 상대방이 마지막 ACK를 못받을 수 있다
+그렇게 되어 한쪽만 종료되는 상황을 방지하기 위해 Time-wait을 설정한다
+
+
+서버 종료시, 즉시 재가동해야하는 상황이 발생하였을때,
+    Time-wait이 설정되어있다면 정상적인 서비스를 할 수가 없다
+
+상대측에서 Time-wait과 근접한 시간에서 FIN을 보낸다면,
+    Time-wait시간은 다시 초기화 되며, 이때 계속 시간이 연장되어 정상적인 서비스가 어려울 수 있다
+
+
+SO_REUSEADDR을 true로 설정하면 PORT를 재사용할 수 있게된다
+    default : false(0)
+
+optlen=sizeof(option);
+option=TRUE;
+setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, (void*) &option, sizeof(option));
