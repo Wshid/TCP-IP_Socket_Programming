@@ -1,0 +1,53 @@
+zombie ps
+main함수의 실행 완료 후, 좀비가 되어 리소스를 잡아먹기도 함
+    -> 따라서 좀비 ps의 소멸 방법에 대해 이해해야함
+
+zom ps의 생성 이유
+    exit(인자)
+    main에서 return을 한 경우
+        -> 둘의 반환값 모두 OS로 전달 됨
+        
+        OS는 child ps를 생성한 pps에게 전달될때까지 child ps를 소멸시키지 않음
+            -> 이 상황에 처한 ps를 좀비 ps라고 함
+
+좀비 ps 소멸 -> pps에게 exit()의 반환값 | return 문의 반환값이 전달되어야 함
+    pps의 적극적인 요청(함수호출) -> OS가 값을 전달해줌
+
+child -> OS <- pps
+
+pps가 child ps 전달값을 요청하지 않으면
+    OS에서 계속 값을 잡아놓게 되고
+        child.ps는 zom.ps로 계속 존재하게 된다
+
+
+zombie ps를 종료시키려면
+
+#include<sys/wait.h>
+
+pid_t wait(int* statloc); -> 성공시 종료된 child.ps의 id, 실패시 -1
+    함수 호출시, 이미 종료된 child.ps 존재한다면,
+        exit()또는 return으로 전달된 값이 statloc 주소에 저장된다
+            -> 하지만 이 변수에는 여러가지가 저장되는데
+        
+        WIFEXITED   child.ps가 정상 종료한경우 True 반환
+        WEXITSTATUS child.ps의 전달 값 반환
+    
+if(WIFEXITED(status)){
+    puts("Normal termination!");
+    printf("Child pass num : %d", WIFEXITED(status));
+}
+
+wait함수는 호출된 시점에 종료된 child ps가 없다면
+    임의의 child ps가 종료될때까지 blocking 됨
+    
+
+waitpid // wait의 blocking 문제 해결
+
+#include<sys/wait.h>
+
+pid_t waitpid(pid_t pid, int* statloc, int options);
+    pid     child.ps id, -1이면 임의의 child ps가 종료되기를 기다림
+    statloc wait함수와 동일
+    options sys/wait.h에 선언된 WNOHANG 전달시,
+                종료된 child ps가 없어도, 0을 반환, 함수를 종료시킴
+            

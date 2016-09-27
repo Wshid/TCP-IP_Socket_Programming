@@ -1,0 +1,72 @@
+언제 child.ps가 종료될 줄 알고
+    waitpid를 계속 호출할것인가?
+    
+pps도 child.ps 못지않게 작업을 바쁘게 함
+
+OS가 알려준다면?
+    -> pps에게 child.ps가 종료되었음을 알려준다
+    -> 이렇게 되면 pps는 하던일을 멈추고 child.ps관련된 일을 우선 처리한다
+        -> SIGNAL Handling의 정의
+
+Signal : 특정 상황이 발생했음을 알리기 위해
+            OS가 ps에게 전달하는 메세지
+
+핸들링 : 특정 메세지와 연관된, 작업이 진행 되는 것 // Signal Handling이라고도 함
+
+
+java의 경우 thread나 ps를 언어차원에서 지원함 // c와 c++에서는 지원하지 않음
+    -> 플랫폼 독립적
+        -> 하지만, 그만큼 Java내에서 알아야할 것이 많음
+
+ps  OS에게 child.ps가 종료되면 zombie_handler라는 이름의 함수 호출
+OS  child.ps종료시 zombie_handler 함수 호출
+    -> 시그널 등록작업
+
+#include<signal.h>
+
+void (*signal(int signo, void (*func)(int)))(int);
+    -> SIG 발생시, 이전에 등록된 함수의 포인터 반환
+        함수 이름 : signal
+        매개 변수 : int signo, void (*func)(int)
+        반환형 : 매개변수형이 int이고 반환형이 void인 함수 포인터
+    
+    signo       특정 상황에 대한 정보
+        SIGALRM     alarm 함수호출을 통해서 등록된 시간 종료시
+        SIGINT      Ctrl + C 입력시
+        SIGCHLD     child.ps 종료시
+    void (*func)(int)   특정 상황에 호출된 함수의 주소값
+
+child.ps가 종료되면 mychild함수 호출
+mychild는 void mychild(int)형이어야 하며
+
+signal(SIGCHLD, mychild); 형태로 호출한다
+
+#include<unistd.h>
+
+unsinged int alarm(unsinged int seconds);
+    0 | SIGALRM이 발생하기까지 남아있는 시간 반환
+    
+    seconds     0을 전달하면, 이전의 SIGALRM 예약 값이 초기화됨
+        예약만 하고 함수 지정 안하면 ps가 종료됨
+
+시그널이 발생하면 sleep 함수의 호출로
+    블로킹 상태에 있던 ps가 깨어남
+
+
+sigaction   signal함수보다 안정적임
+    -> 요즘에 사용되는 방법, signal은 잘 사용되지 않음
+
+#include<signal.h>
+
+int sigaction(int signo, // 시그널의 정보
+                const struct sigaction *act, // 시그널 발생시 호출될 함수
+                struct sigaction *oldact) // 이전에 등록되었던 SIG.handler의 정보 얻는데 사용하는 인자. 필요없으면 0
+
+struct sigaction
+{
+    void (*sa_handler)(int); // SIG_handler의 함수 포인터 값
+    sigset_t sa_mask; // 모든 비트 0으로 초기화
+    int sa_flags; // 0으로 초기화
+}
+
+sa_mask와 sa_flags는 시그널 관련 옵션 및 특성 지정에 사용됨
